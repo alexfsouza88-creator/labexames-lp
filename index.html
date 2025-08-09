@@ -2317,5 +2317,36 @@ Not an official Manus doc nor endorsed by Manus. Content may contain inaccuracie
         });
       });
     </script>
+
+    <!-- Ensure the site stays in light mode and send form data via email -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Function to remove any accidental dark mode class on scroll
+        function removeDark() {
+          document.documentElement.classList.remove('dark');
+          document.body.classList.remove('dark');
+        }
+        // Remove dark class initially
+        removeDark();
+        // Ensure dark class is removed whenever the user scrolls
+        window.addEventListener('scroll', removeDark);
+        // Attach mailto handler to all forms on the page
+        const forms = document.querySelectorAll('form');
+        forms.forEach(function(form) {
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const lines = [];
+            formData.forEach(function(value, key) {
+              lines.push(key + ': ' + value);
+            });
+            const subject = 'Novo formulário do site LabExames';
+            const body = lines.join('\n');
+            const mailto = 'mailto:alexf.souza88@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            window.open(mailto, '_blank');
+          });
+        });
+      });
+    </script>
   </body>
 </html>
