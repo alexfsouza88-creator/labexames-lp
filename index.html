@@ -28,25 +28,74 @@
         window.addEventListener('scroll', keepLightMode);
       })();
     </script>
-
-    <!-- Redirect form submissions via mailto to the specified address -->
+    <!-- Apply final adjustments to the page after React mounts -->
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const forms = document.querySelectorAll('form');
-        forms.forEach(function(form) {
-          form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const data = new FormData(form);
-            let body = '';
-            for (const [key, value] of data.entries()) {
-              body += `${key}: ${value}\n`;
+      // Wait until the DOM is fully loaded
+      window.addEventListener('load', function () {
+        // 1. Remove "Dra." prefixes from testimonial cards
+        document.querySelectorAll('div, span, h3, h4, p').forEach(function (el) {
+          if (el.textContent && el.textContent.trim().startsWith('Dra.')) {
+            // Remove only the "Dra." portion leaving the remaining content
+            el.textContent = el.textContent.replace(/^Dra\.\s*/g, '').trim();
+          }
+        });
+        // 2. Remove the entire footer content (dark section at the bottom)
+        const footer = document.querySelector('footer');
+        if (footer) {
+          footer.remove();
+        }
+        // 3. Update metric labels from old to new phrases
+        const replacements = {
+          '+300 prescritores parceiros': 'Ampla rede de parceiros prescritos',
+          'Suporte 24/7': 'Suporte Diferenciado',
+          'Resultados em 48h': 'Agilidade nos Resultados'
+        };
+        document.querySelectorAll('span, p, div').forEach(function (el) {
+          const txt = el.textContent;
+          if (!txt) return;
+          Object.keys(replacements).forEach(function (oldText) {
+            if (txt.includes(oldText)) {
+              el.textContent = txt.replace(oldText, replacements[oldText]);
             }
-            const subject = 'Novo formulário do site LabExames';
-            const mailto = `mailto:alexf.souza88@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            window.open(mailto, '_blank');
           });
         });
       });
+    </script>
+
+    <!-- Redirect form submissions via mailto to the specified address -->
+    <script>
+      // Attach a single event listener on the document to catch all form submissions.
+      // Use the capture phase and stop immediate propagation so that our handler
+      // overrides any default submit handlers defined by the React app. This
+      // ensures form data is emailed via a `mailto:` link instead of being
+      // processed by the site's internal JavaScript.
+      document.addEventListener(
+        'submit',
+        function (event) {
+          const form = event.target;
+          // Only handle HTML forms
+          if (!form || form.tagName !== 'FORM') return;
+          // Prevent the default submission and block other submit handlers
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          // Collect form data into a mailto body
+          const data = new FormData(form);
+          let body = '';
+          for (const [key, value] of data.entries()) {
+            body += `${key}: ${value}\n`;
+          }
+          const subject = 'Novo formulário do site LabExames';
+          const mailto =
+            'mailto:alexf.souza88@gmail.com' +
+            '?subject=' +
+            encodeURIComponent(subject) +
+            '&body=' +
+            encodeURIComponent(body);
+          // Open the mailto link in a new window/tab
+          window.open(mailto, '_blank');
+        },
+        true
+      );
     </script>
   </body>
 </html>
