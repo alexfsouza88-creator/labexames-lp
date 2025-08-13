@@ -109,7 +109,7 @@
           }
           const subject = 'Novo formulário do site LabExames';
           const mailto =
-            'mailto:alexf.souza88@gmail.com' +
+            'mailt@o:alexf.souza88@gmail.com' +
             '?subject=' +
             encodeURIComponent(subject) +
             '&body=' +
@@ -118,7 +118,61 @@
           window.open(mailto, '_blank');
         },
         true
-      );
+   
+          <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        function removeTitles() {
+          document.querySelectorAll('*').forEach(function (el) {
+            if (!el.textContent) return;
+            const newTxt = el.textContent.replace(/^\s*Dra\.\s*/i, '').replace(/^\s*Dr\.\s*/i, '');
+            if (newTxt !== el.textContent) {
+              el.textContent = newTxt;
+            }
+          });
+        }
+        function updateMetrics() {
+          const replacements = {
+            '+300 prescritores parceiros': 'Ampla rede de parceiros prescritos',
+            'Suporte 24/7': 'Suporte Diferenciado',
+            'Resultados em 48h': 'Agilidade nos Resultados'
+          };
+          document.querySelectorAll('*').forEach(function (el) {
+            if (!el.textContent) return;
+            let txt = el.textContent;
+            for (const oldText in replacements) {
+              if (txt.includes(oldText)) {
+                el.textContent = txt.replace(oldText, replacements[oldText]);
+                txt = el.textContent;
+              }
+            }
+          });
+        }
+        removeTitles();
+        updateMetrics();
+        const observer = new MutationObserver(function () {
+          removeTitles();
+          updateMetrics();
+        });
+        observer.observe(document.body, {childList: true, subtree: true});
+      });
+    </script>
+    <script>
+      document.addEventListener('submit', function (event) {
+        const form = event.target;
+        if (!form || form.tagName !== 'FORM') return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const data = new FormData(form);
+        let body = '';
+        for (const [key, value] of data.entries()) {
+          body += `${key}: ${value}\n`;
+        }
+        const subject = 'Novo formul\u00e1rio do site LabExames';
+        const mailto = 'mailto:alexf.souza88@gmail.com' + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        window.open(mailto, '_blank');
+      }, true);
+    </script>
+);
     </script>
   </body>
 </html>
