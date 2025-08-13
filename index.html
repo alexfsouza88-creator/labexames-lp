@@ -41,11 +41,16 @@
       document.addEventListener('DOMContentLoaded', function () {
         // Function to remove titles "Dra." and "Dr." from testimonial cards. These titles appear as standalone text nodes.
         function removeTitles() {
+          // Remove occurrences of "Dra." or "Dr." at the beginning of text nodes.  
           document.querySelectorAll('*').forEach(function (el) {
             if (!el.textContent) return;
-            const text = el.textContent.trim();
-            if (text === 'Dra.' || text === 'Dr.') {
-              el.textContent = '';
+            let txt = el.textContent;
+            // Replace prefixes at the start of the string (e.g., "Dra. " or "Dr. ")
+            const newTxt = txt
+              .replace(/^\s*Dra\.\s*/i, '')
+              .replace(/^\s*Dr\.\s*/i, '');
+            if (newTxt !== txt) {
+              el.textContent = newTxt;
             }
           });
         }
